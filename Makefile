@@ -1,6 +1,6 @@
 CYAN ?= \033[0;36m
 
-.PHONY: deps lint check test
+.PHONY: deps lint check test all test_app
 .EXPORT_ALL_VARIABLES:
 
 all: ; @echo "$(CYAN)Welcome$(COFF)"
@@ -27,3 +27,9 @@ check:
 test:
 	@printf "$(CYAN)Running test suite$(COFF)\n"
 	poetry run pytest
+
+# Run the test app
+test_app:
+	@printf "$(CYAN)Running test app$(COFF)\n"
+	poetry run python tests/test_app/manage.py migrate
+	poetry run python tests/test_app/manage.py runserver_plus

@@ -232,3 +232,12 @@ def has_fieldsets_check(adminform: AdminForm) -> bool:
     if not fieldsets or (len(fieldsets) == 1 and fieldsets[0][0] is None):
         return False
     return True
+
+
+def attr(**kwargs) -> Callable:
+    def decorator(func: Callable):
+        for key, value in kwargs.items():
+            setattr(func, key, value)
+        return func
+
+    return decorator

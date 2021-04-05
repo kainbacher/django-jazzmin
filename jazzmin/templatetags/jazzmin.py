@@ -7,7 +7,7 @@ from typing import List, Dict, Union, Any
 
 from django.conf import settings
 from django.contrib.admin import ListFilter
-from django.contrib.admin.helpers import AdminForm
+from django.contrib.admin.helpers import AdminForm, Fieldset, InlineAdminFormSet
 from django.contrib.admin.models import LogEntry
 from django.contrib.admin.sites import all_sites
 from django.contrib.admin.views.main import PAGE_VAR, ChangeList
@@ -18,6 +18,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.db.models.base import ModelBase
 from django.http import HttpRequest
 from django.template import Library, Context
+from django.template.defaultfilters import capfirst
 from django.template.loader import get_template
 from django.templatetags.static import static
 from django.utils.html import format_html, escape
@@ -282,6 +283,37 @@ def has_fieldsets(adminform: AdminForm) -> bool:
 
 
 @register.filter
+def is_inline(form: Union[Fieldset, InlineAdminFormSet]) -> bool:
+    """
+    Are we an inline?
+    """
+    return type(form) == InlineAdminFormSet
+
+
+@register.simple_tag
+def get_sections(
+    admin_form: AdminForm, inline_admin_formsets: List[InlineAdminFormSet]
+) -> List[Union[Fieldset, InlineAdminFormSet]]:
+    """
+    Get and sort all of the sections that need rendering out in a change form
+    """
+    fieldsets = [x for x in admin_form]
+
+    # Make inlines behave like formsets
+    for fieldset in inline_admin_formsets:
+        fieldset.name = capfirst(fieldset.opts.verbose_name_plural)
+        fieldset.is_inline = True
+        fieldsets.append(fieldset)
+
+    if hasattr(admin_form.model_admin, "jazzmin_section_order"):
+        fieldsets = order_with_respect_to(
+            fieldsets, admin_form.model_admin.jazzmin_section_order, getter=lambda x: x.name
+        )
+
+    return fieldsets
+
+
+@register.filter
 def remove_lang(url: str, language_code: str) -> str:
     """
     Remove the language code from the url, if we have one
@@ -294,6 +326,7 @@ def debug(value: Any) -> Any:
     """
     Add in a breakpoint here and use filter in templates for debugging ;)
     """
+    breakpoint()
     return type(value)
 
 
@@ -323,12 +356,12 @@ def get_changeform_template(adminform: AdminForm) -> str:
         changeform_format = options["changeform_format_overrides"][model_name]
 
     if not has_fieldsets and not has_inlines:
-        return CHANGEFORM_TEMPLATES.get("single")
+        return CHANGEFORM_TEMPLATES["single"]
 
     if not changeform_format or changeform_format not in CHANGEFORM_TEMPLATES.keys():
-        return CHANGEFORM_TEMPLATES.get("horizontal_tabs")
+        return CHANGEFORM_TEMPLATES["horizontal_tabs"]
 
-    return CHANGEFORM_TEMPLATES.get(changeform_format)
+    return CHANGEFORM_TEMPLATES[changeform_format]
 
 
 @register.simple_tag

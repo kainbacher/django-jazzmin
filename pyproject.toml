@@ -66,11 +66,12 @@ mkdocs = "*"                # Tool for serving rendered markdown docs
 polib = "*"                 # Tool for dealing with translation files
 factory-boy = "*"           # Factory generation
 mypy = "*"                  # Type checking
+click = "^7.1.2"            # Framework for building cli's
 # 3rd party app support demonstrated in test app
 django-mptt = "^0.11.0"
 django-treebeard = "^4.3.1"
 django-import-export = "^2.4.0"
-click = "^7.1.2"
+dj-database-url = "^0.5.0"
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/farridav/django-jazzmin/issues"
