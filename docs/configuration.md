@@ -272,7 +272,7 @@ class BookAdmin(admin.ModelAdmin):
     )
     inlines = (BookLoanInline,)
 
-    # Order the sections withing the change form
+    # Order the sections within the change form
     jazzmin_section_order = ("book loans", "general", "other")
 ```
 

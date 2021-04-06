@@ -42,7 +42,7 @@ class BookAdmin(ImportExportMixin, admin.ModelAdmin):
 
     actions_on_bottom = True
 
-    # Order the sections withing the change form
+    # Order the sections within the change form
     jazzmin_section_order = ("book loans", "general", "other")
 
 

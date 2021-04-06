@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 
-from tests.test_app.library.factories import BookFactory
+from .test_app.library.factories import BookFactory
 
 
 @pytest.fixture

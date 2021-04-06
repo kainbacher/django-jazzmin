@@ -282,14 +282,6 @@ def has_fieldsets(adminform: AdminForm) -> bool:
     return has_fieldsets_check(adminform)
 
 
-@register.filter
-def is_inline(form: Union[Fieldset, InlineAdminFormSet]) -> bool:
-    """
-    Are we an inline?
-    """
-    return type(form) == InlineAdminFormSet
-
-
 @register.simple_tag
 def get_sections(
     admin_form: AdminForm, inline_admin_formsets: List[InlineAdminFormSet]
@@ -324,9 +316,8 @@ def remove_lang(url: str, language_code: str) -> str:
 @register.filter
 def debug(value: Any) -> Any:
     """
-    Add in a breakpoint here and use filter in templates for debugging ;)
+    Add in a breakpoint() here and use filter in templates for debugging ;)
     """
-    breakpoint()
     return type(value)
 
 
